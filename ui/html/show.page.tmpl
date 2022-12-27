@@ -11,8 +11,8 @@
         </div>
         <pre><code>{{.Content}}</code></pre>
         <div class='metadata'>
-            <time>Создан: {{.Created}}</time>
-            <time>Срок: {{.Expires}}</time>
+            <time>Создан: {{humanDate .Created}}</time>
+            <time>Срок: {{humanDate .Expires}}</time>
         </div>
     </div>
     {{end}}

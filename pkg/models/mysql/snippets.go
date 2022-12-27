@@ -128,3 +128,7 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 	// Если все в порядке, возвращаем срез с данными.
 	return snippets, nil
 }
+
+func (m *SnippetModel) DELETE(*models.Snippet) {
+	//stmt := `DELETE FROM snippets WHERE id=?1`
+}

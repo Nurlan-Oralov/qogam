@@ -28,17 +28,11 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	// Чтобы функция main() была более компактной, мы поместили код для создания
-	// пула соединений в отдельную функцию openDB(). Мы передаем в нее полученный
-	// источник данных (DSN) из флага командной строки.
 	db, err := openDB(*dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
 
-	// Мы также откладываем вызов db.Close(), чтобы пул соединений был закрыт
-	// до выхода из функции main().
-	// Подробнее про defer: https://golangs.org/errors#defer
 	defer db.Close()
 
 	templateCache, err := newTemplateCache("./ui/html/")
@@ -60,9 +54,6 @@ func main() {
 	}
 
 	infoLog.Printf("Запуск сервера на %s", *addr)
-	// Поскольку переменная `err` уже объявлена в приведенном выше коде, нужно
-	// использовать оператор присваивания =
-	// вместо оператора := (объявить и присвоить)
 	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
 }

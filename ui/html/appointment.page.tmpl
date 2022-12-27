@@ -1,0 +1,16 @@
+{{template "base" .}}
+
+{{define "title"}}Создание заявки{{end}}
+
+{{define "main"}}
+    <div class='snippet'>
+        <form method="POST" action="postform">
+                    <label>Title:</label><br>
+                    <input type="textarea" name="title" /><br><br>
+                    <label>Content:</label><br>
+                    <input type="textarea" name="content" /><br><br>
+                    <input type="submit" value="Отправить" />
+        </form>
+        </div>
+    </div>
+{{end}}

@@ -56,9 +56,9 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Создаем несколько переменных, содержащих тестовые данные. Мы удалим их позже.
-	title := "История про улитку"
-	content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
+	//!ОСТОРОЖНО ХАРДКОД! Страница appointment не пашет. Пока так. Создаем несколько переменных, содержащих тестовые данные.
+	title := "Сендвичи по 370тг!"
+	content := "Продам сендвичи!\n370тг,\nОбщага айту. 6 этаж 31кв!))"
 	expires := "7"
 
 	// Передаем данные в метод SnippetModel.Insert(), получая обратно
@@ -71,4 +71,38 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 
 	// Перенаправляем пользователя на соответствующую страницу заметки.
 	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+}
+
+func (app *application) appointmentForm(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/snippet/appointment" {
+		app.notFound(w)
+		return
+	}
+
+	s, err := app.snippets.Latest()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	app.render(w, r, "appointment.page.tmpl", &templateData{
+		Snippets: s,
+	})
+}
+
+func (app *application) deleteSnippet(w http.ResponseWriter, r http.Request) {
+	if r.Method != http.MethodDelete {
+		w.Header().Set("Allow", http.MethodDelete)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+
+	//айди взял а вот как делит сделать непонял((
+	fmt.Println(id)
 }
