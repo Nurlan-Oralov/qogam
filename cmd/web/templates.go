@@ -1,17 +1,18 @@
 package main
 
 import (
+	"golangify.com/snippetbox/pkg/forms"
 	"golangify.com/snippetbox/pkg/models"
 	"html/template" // новый импорт
-	"net/url"
 	"path/filepath" // новый импорт
 	"time"
 )
 
+// Update the templateData fields, removing the individual FormData and
+// FormErrors fields and replacing them with a single Form field.
 type templateData struct {
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
+	Form        *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }
