@@ -4,14 +4,24 @@
 <form action='/snippet/create' method='POST'>
     <div>
         <label>Проблема:</label>
+        {{with .FormErrors.title}}
+            <label class='error'>{{.}}</label>
+        {{end}}
         <input type='text' name='title'>
     </div>
     <div>
         <label>Описание:</label>
+        {{with .FormErrors.content}}
+            <label class='error'>{{.}}</label>
+        {{end}}
         <textarea name='content'></textarea>
     </div>
     <div>
         <label>Будет отображаться:</label>
+        {{with .FormErrors.expires}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        {{$exp := or (.FormData.Get "expires") "365"}}
         <input type='radio' name='expires' value='365' checked> Год
         <input type='radio' name='expires' value='7'> Неделя
         <input type='radio' name='expires' value='1'> День
