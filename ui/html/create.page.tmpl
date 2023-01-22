@@ -23,7 +23,7 @@
                 <label class='error'>{{.}}</label>
             {{end}}
             {{$exp := or (.Get "expires") "365"}}
-            <input type='radio' name='expires' value='365' {{if (eq $exp "365")}}checked{{end}}> One Year
+            <input type='radio' name='expires' value='30' {{if (eq $exp "30")}}checked{{end}}> One Month
             <input type='radio' name='expires' value='7' {{if (eq $exp "7")}}checked{{end}}> One Week
             <input type='radio' name='expires' value='1' {{if (eq $exp "1")}}checked{{end}}> One Day
         </div>

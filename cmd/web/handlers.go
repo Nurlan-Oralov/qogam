@@ -65,7 +65,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 	form.Required("title", "content", "expires")
 	form.MaxLength("title", 100)
-	form.PermittedValues("expires", "365", "7", "1")
+	form.PermittedValues("expires", "30", "7", "1")
 	// If the form isn't valid, redisplay the template passing in the
 	// form.Form object as the data.
 	if !form.Valid() {

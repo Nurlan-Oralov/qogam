@@ -22,16 +22,16 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 
 func (app *application) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Create a deferred function (which will always be run in the event
-		// of a panic as Go unwinds the stack).
+		// Создает отложенную функцию (которая всегда будет выполняться в случае
+		// паники, когда Go разматывает стек).
 		defer func() {
-			// Use the builtin recover function to check if there has been a
-			// panic or not. If there has...
+			// Используется встроенную функцию восстановления, чтобы проверить, не было ли
+			// паниковать или нет. Если так оно и было...
 			if err := recover(); err != nil {
-				// Set a "Connection: close" header on the response.
+				// Устанавливаем заголовок "Подключение: закрыть" в ответе.
 				w.Header().Set("Connection", "close")
-				// Call the app.serverError helper method to return a 500
-				// Internal Server response.
+				// Вызываем вспомогательный метод app.serverError, чтобы вернуть 500ь 500
+				// Внутренний ответ сервера.
 				app.serverError(w, fmt.Errorf("%s", err))
 			}
 		}()

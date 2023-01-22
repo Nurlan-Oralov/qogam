@@ -6,19 +6,25 @@ import (
 	"net/http"
 )
 
-// Update the signature for the routes() method so that it returns a
+// Обновляем подпись для метода routes(), чтобы он возвращал
 // http.Handler instead of *http.ServeMux.
 func (app *application) routes() http.Handler {
 	// Create a middleware chain containing our 'standard' middleware
 	// which will be used for every request our application receives.
 	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
+	// Создаем новую цепочку middleware, содержащую промежуточное программное обеспечение, специфичное для
+	// наших динамических маршрутов приложений. На данный момент эта цепочка будет содержать только
+	// middleware сеанса, но мы добавим к нему больше позже
+	dynamicMiddleware := alice.New(app.session.Enable)
+
 	mux := pat.New()
-	mux.Get("/", http.HandlerFunc(app.home))
-	mux.Get("/snippet", http.HandlerFunc(app.showSnippet))
-	mux.Post("/snippet/create", http.HandlerFunc(app.createSnippet))
-	mux.Get("/snippet/form", http.HandlerFunc(app.createSnippetForm))
-	mux.Get("/snippet/:id", http.HandlerFunc(app.showSnippet))
+	// Обновляем эти маршруты, чтобы использовать новую цепочку middleware за которой следует
+	// с помощью соответствующей функции-обработчика.
+	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
+	mux.Get("/snippet/create", dynamicMiddleware.ThenFunc(app.createSnippetForm))
+	mux.Post("/snippet/create", dynamicMiddleware.ThenFunc(app.createSnippet))
+	mux.Get("/snippet/:id", dynamicMiddleware.ThenFunc(app.showSnippet))
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Get("/static/", http.StripPrefix("/static", fileServer))

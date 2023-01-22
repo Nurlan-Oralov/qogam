@@ -40,26 +40,26 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		return
 	}
 
-	// Initialize a new buffer.
+	// Инициализировать новый буфер.
 	buf := new(bytes.Buffer)
-	// Write the template to the buffer, instead of straight to the
-	// http.ResponseWriter. If there's an error, call our serverError helper and then
+	// Запишем шаблон в буфер, а не прямо в
+	// http.ResponseWriter. Если произошла ошибка, вызовите наш помощник serverError, а затем
 	// return.
 	err := ts.Execute(buf, app.addDefaultData(td, r))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	// Write the contents of the buffer to the http.ResponseWriter. Again, this
-	// is another time where we pass our http.ResponseWriter to a function that
-	// takes an io.Writer.
+	// Запишите содержимое буфера в http.ResponseWriter. Опять же, это
+	// - это еще один случай, когда мы передаем наш http.ResponseWriter функции, которая
+	// принимает ввод-вывод.Писатель.
 	buf.WriteTo(w)
 }
 
-// Create an addDefaultData helper. This takes a pointer to a templateData
-// struct, adds the current year to the CurrentYear field, and then returns
-// the pointer. Again, we're not using the *http.Request parameter at the
-// moment, but we will do later in the book.
+// Создайте помощник по добавлению данных по умолчанию. Это принимает указатель на TemplateData
+// struct, добавляет текущий год в поле currentYear, а затем возвращает
+// указатель. Опять же, мы не используем *http. Запрашивайте параметр в
+// момент, но мы сделаем это позже в книге.
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}

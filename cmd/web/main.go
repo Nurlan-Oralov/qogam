@@ -3,11 +3,13 @@ package main
 import (
 	"database/sql" // Новый импорт
 	"flag"
+	"github.com/golangcollege/sessions"
 	"golangify.com/snippetbox/pkg/models/mysql"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql" // Новый импорт
 )
@@ -15,6 +17,7 @@ import (
 type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger
+	session       *sessions.Session
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
 }
@@ -23,6 +26,12 @@ func main() {
 	addr := flag.String("addr", ":4000", "Сетевой адрес веб-сервера")
 	// Определение нового флага из командной строки для настройки MySQL подключения.
 	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "Название MySQL источника данных")
+	flag.Parse()
+
+	// Определяем новый флаг командной строки для секрета сеанса (случайный ключ, который
+	// будет использоваться для шифрования и аутентификации сеансовых файлов cookie).
+	// Это должно быть 32 байт длиной.
+	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret key")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -40,9 +49,20 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	// Используем sessions.New() функция для инициализации нового диспетчера сеансов,
+	// передавая секретный ключ в качестве параметра.
+	//Затем мы настраиваем его так, чтобы сеансы всегда истекали через 12 часов.
+	//Note: The sessions.New() function returns a Session struct which holds the
+	//configuration settings for the session. In the code above we’ve set the Lifetime field
+	//of this struct so that sessions expire after 12 hours, but there’s a range of other fields
+	//that you can and should configure depending on your application’s needs.
+	session := sessions.New([]byte(*secret))
+	session.Lifetime = 12 * time.Hour
+
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
+		session:       session,
 		snippets:      &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
 	}
