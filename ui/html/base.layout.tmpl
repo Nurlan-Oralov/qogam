@@ -19,6 +19,9 @@
             <a href='/snippet/create'>Рассказать о проблеме</a>
         </nav>
         <main>
+            {{with .Flash}}
+            <div class='flash'>{{.}}</div>
+            {{end}}
             {{template "main" .}}
         </main>
         {{template "footer" .}}

@@ -12,6 +12,7 @@ import (
 // FormErrors fields and replacing them with a single Form field.
 type templateData struct {
 	CurrentYear int
+	Flash       string
 	Form        *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet

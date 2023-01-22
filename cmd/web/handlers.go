@@ -29,7 +29,6 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-
 	s, err := app.snippets.Get(id)
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
@@ -39,8 +38,6 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	// Используем помощника render() для отображения шаблона.
 	app.render(w, r, "show.page.tmpl", &templateData{
 		Snippet: s,
 	})
@@ -80,6 +77,14 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
+	// Используйте метод Put() для добавления строкового значения ("Ваш фрагмент был сохранен
+	// успешно!") и соответствующий ключ ("flash") к сеансу данные.
+	// Обратите внимание, что если для текущего пользователя нет существующего сеанса
+	// (или срок действия их сеанса истек), затем для них создается новый, пустой сеанс
+	// будет автоматически создан middleware сеанса.
+	app.session.Put(r, "flash", "Snippet successfully created!")
+
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
