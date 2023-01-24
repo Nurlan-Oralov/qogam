@@ -15,8 +15,19 @@
             <h1><a href='/'>Qogam</a></h1>
         </header>
         <nav>
-            <a href='/'>Домашняя страница</a>
-            <a href='/snippet/create'>Рассказать о проблеме</a>
+            <!-- Update the navigation to include signup, login and logout links -->
+            <div>
+                <a href='/'>На главную</a>
+                <a href='/snippet/create'>Опубликовать</a>
+            </div>
+            <div>
+                <a href='/user/signup'>Регистрация</a>
+                <a href='/user/login'>Вход</a>
+                <form action='/user/logout' method='POST'>
+                    <button>Выход</button>
+            </form>
+            </div>
+
         </nav>
         <main>
             {{with .Flash}}
