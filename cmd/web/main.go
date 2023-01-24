@@ -73,8 +73,11 @@ func main() {
 		Handler:  app.routes(),
 	}
 
-	infoLog.Printf("Запуск сервера на http://localhost%s/", *addr)
-	err = srv.ListenAndServe()
+	infoLog.Printf("Запуск сервера на https://localhost%s/", *addr)
+	// Используем метод ListenAndServeTLS() для запуска HTTPS-сервера. Мы
+	// передаем пути к tls-сертификату и соответствующему секретному ключу в качестве
+	// двух параметров.
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
 }
 
