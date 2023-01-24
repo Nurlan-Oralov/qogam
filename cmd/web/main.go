@@ -89,6 +89,10 @@ func main() {
 		ErrorLog:  errorLog,
 		Handler:   app.routes(),
 		TLSConfig: tlsConfig,
+		// Добавим тайм-ауты ожидания, чтения и записи на сервер.
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	infoLog.Printf("Запуск сервера на https://localhost%s/", *addr)
