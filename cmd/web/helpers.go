@@ -50,22 +50,29 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		app.serverError(w, err)
 		return
 	}
-	// Запишите содержимое буфера в http.ResponseWriter. Опять же, это
+	// Запишет содержимое буфера в http.ResponseWriter. Опять же, это
 	// - это еще один случай, когда мы передаем наш http.ResponseWriter функции, которая
 	// принимает ввод-вывод.Писатель.
 	buf.WriteTo(w)
 }
 
-// Создайте помощник по добавлению данных по умолчанию. Это принимает указатель на TemplateData
+// Создает помощник по добавлению данных по умолчанию. Это принимает указатель на TemplateData
 // struct, добавляет текущий год в поле currentYear, а затем возвращает
-// указатель. Опять же, мы не используем *http. Запрашивайте параметр в
-// момент, но мы сделаем это позже в книге.
+// указатель. Опять же, мы не используем *http. Запрашивает параметр в
+// момент, но мы сделаем это позже.
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}
 	}
 	td.CurrentYear = time.Now().Year()
-	// Add the flash message to the template data, if one exists.
 	td.Flash = app.session.PopString(r, "flash")
+	// Add the authentication status to the template data.
+	td.IsAuthenticated = app.isAuthenticated(r)
 	return td
+}
+
+// Возвращает значение true, если текущий запрос от аутентифицированного пользователя,
+// в противном случае возвращает значение false.
+func (app *application) isAuthenticated(r *http.Request) bool {
+	return app.session.Exists(r, "authenticatedUserID")
 }
