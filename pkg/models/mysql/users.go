@@ -46,7 +46,34 @@ VALUES(?, ?, ?, UTC_TIMESTAMP())`
 // существует ли пользователь с указанным адресом электронной почты и пароль.
 // Это вернет соответствующий идентификатор пользователя, если они это сделают.
 func (m *UserModel) Authenticate(email, password string) (int, error) {
-	return 0, nil
+	// Извлекает идентификатор и хэшированный пароль, связанные с данным email.
+	// Если соответствующего адреса электронной почты не существует
+	// или пользователь не активен, возвращаем ErrInvalidCredentials error.
+	var id int
+	var hashedPassword []byte
+	stmt := "SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE"
+	row := m.DB.QueryRow(stmt, email)
+	err := row.Scan(&id, &hashedPassword)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, models.ErrInvalidCredentials
+		} else {
+			return 0, err
+		}
+	}
+	// Проверяет, совпадают ли хэшированный пароль
+	// и предоставленный пароль в виде обычного текста.
+	// Если они этого не сделают, мы вернем ошибку ErrInvalidCredentials.
+	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return 0, models.ErrInvalidCredentials
+		} else {
+			return 0, err
+		}
+	}
+	// В противном случае пароль введен правильно. Вернет идентификатор пользователя.
+	return id, nil
 }
 
 // Get Мы будем использовать этот метод для получения сведений о конкретном пользователе на основе
