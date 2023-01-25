@@ -11,6 +11,7 @@ import (
 // Update the templateData fields, removing the individual FormData and
 // FormErrors fields and replacing them with a single Form field.
 type templateData struct {
+	CSRFToken       string
 	CurrentYear     int
 	Flash           string
 	Form            *forms.Form
