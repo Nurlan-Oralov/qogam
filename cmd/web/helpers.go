@@ -76,5 +76,9 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 // Возвращает значение true, если текущий запрос от аутентифицированного пользователя,
 // в противном случае возвращает значение false.
 func (app *application) isAuthenticated(r *http.Request) bool {
-	return app.session.Exists(r, "authenticatedUserID")
+	isAuthenticated, ok := r.Context().Value(contextKeyIsAuthenticated).(bool)
+	if !ok {
+		return false
+	}
+	return isAuthenticated
 }

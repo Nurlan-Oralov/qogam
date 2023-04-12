@@ -16,7 +16,7 @@ func (app *application) routes() http.Handler {
 	// Создаем новую цепочку middleware, содержащую промежуточное программное обеспечение, специфичное для
 	// наших динамических маршрутов приложений. На данный момент эта цепочка будет содержать только
 	// middleware сеанса, но мы добавим к нему больше позже
-	dynamicMiddleware := alice.New(app.session.Enable, noSurf)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate)
 
 	mux := pat.New()
 	// Обновляем эти маршруты, чтобы использовать новую цепочку middleware за которой следует

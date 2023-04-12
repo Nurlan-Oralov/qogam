@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"golangify.com/snippetbox/pkg/models"
 	"net/http"
 )
 
@@ -68,4 +71,35 @@ func noSurf(next http.Handler) http.Handler {
 		Secure:   true,
 	})
 	return csrfHandler
+}
+
+func (app *application) authenticate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Проверит, существует ли в сеансе значение  authenticatedUserID.
+		// Если *isn't present*, вызовет следующий обработчик в цепочке в обычном режиме.
+		exists := app.session.Exists(r, "authenticatedUserID")
+		if !exists {
+			next.ServeHTTP(w, r)
+			return
+		}
+		// Извлекает сведения о текущем пользователе из базы данных.
+		// Если соответствующая запись не найдена или текущий пользователь был деактивирован,
+		// удалит (недопустимое) значение идентификатора пользователя, прошедшего проверку подлинности,
+		// из их сеанса и вызовет следующий обработчик в цепочке в обычном режиме.
+		user, err := app.users.Get(app.session.GetInt(r, "authenticatedUserID"))
+		if errors.Is(err, models.ErrNoRecord) || !user.Active {
+			app.session.Remove(r, "authenticatedUserID")
+			next.ServeHTTP(w, r)
+			return
+		} else if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		// Otherwise, we know that the request is coming from a active, authenticated,
+		// user. We create a new copy of the request, with a true boolean value
+		// added to the request context to indicate this, and call the next handler
+		// in the chain *using this new copy of the request*.
+		ctx := context.WithValue(r.Context(), contextKeyIsAuthenticated, true)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
