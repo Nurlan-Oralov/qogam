@@ -79,6 +79,7 @@ func TestShowSnippet(t *testing.T) {
 		{"String ID", "/snippet/foo", http.StatusNotFound, nil},
 		{"Empty ID", "/snippet/", http.StatusNotFound, nil},
 		{"Trailing slash", "/snippet/1/", http.StatusNotFound, nil},
+		{"Zero ID", "/snippet/0", http.StatusNotFound, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
