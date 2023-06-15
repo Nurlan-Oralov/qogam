@@ -106,7 +106,19 @@ Visual representations, such as UML, Use-Case, and ERD diagrams, provide a clear
   **Downvote:** Represents a downvote made by a user on a post. It include attributes such as downvote ID, user ID (foreign key to the User entity), and post ID (foreign key to the Post entity).
   
   **UML diagram:**
-
+    ![image](https://github.com/Nurlan-Oralov/qogam/assets/76832263/ac861067-2c6e-48ed-8b56-d927c2af5d4d)
+    
+    **User Registration:** Represents the use case of a user registering in the system.
+    
+    **User Login:** Represents the use case of a user logging into the system.
+    
+    **Create Post:** Represents the use case of a user creating a new post.
+    
+    **Create Comment:** Represents the use case of a user creating a comment on a post.
+    
+    **Upvote/Downvote Post or Comment:** Represents the use case of a user upvoting or downvoting a post or comment.
+    
+    **Search Posts:** Represents the use case of a user searching for posts based on certain criteria
 
 **15. References and Resources**
 To develop the University Reddit clone and understand the underlying concepts, we referred to various resources. You can find a list of references, including books, articles, and websites, in the References and Resources section.
